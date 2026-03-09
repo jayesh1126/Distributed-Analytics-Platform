@@ -1,0 +1,60 @@
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.war
+*.nar
+*.zip
+*.tar.gz
+*.rar
+target/
+*.log
+
+# Spring Boot
+application-local.yml
+application-dev.yml
+.env
+.env.local
+
+# Maven (if used)
+pom.xml.tag
+pom.xml.releaseBackup
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Temp files
+*.tmp
+*.temp
+*.bak
+
+# JVM
+.jdtscope
+.project
+.settings/
+bin/
+.classpath
