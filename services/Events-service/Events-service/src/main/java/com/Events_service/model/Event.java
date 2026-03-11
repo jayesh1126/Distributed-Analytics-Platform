@@ -1,8 +1,9 @@
 package com.Events_service.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
-
+import org.hibernate.annotations.JdbcTypeCode;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -22,7 +23,9 @@ public class Event {
 
     private String userId;
 
-    private Double amount;
+    @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    private JsonNode payload;
 
     private Instant createdAt;
 }

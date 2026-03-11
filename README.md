@@ -8,8 +8,7 @@ retrieving events.\
 This service is the first building block of a larger distributed event
 analytics platform.
 
-The service exposes a REST API to create and retrieve events and
-persists them in **PostgreSQL**.\
+The service exposes a REST API that ingests events with flexible JSON payload and persists them in **PostgreSQL** and publishes them to Kafka topic **events**.\
 Infrastructure is provided locally via **Docker Compose** (Postgres +
 pgAdmin).
 
@@ -32,10 +31,15 @@ POST /events
 Example request:
 
 ``` bash
-curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -d '{
-  "type": "PurchaseCompleted",
+curl -X POST http://localhost:8080/events \
+-H "Content-Type: application/json" \
+-d '{
+  "type": "PAYMENT_COMPLETED",
   "userId": "123",
-  "amount": 49.99
+  "payload": {
+    "amount": 49.99,
+    "currency": "USD"
+  }
 }'
 ```
 
@@ -44,10 +48,13 @@ Example response:
 ``` json
 {
   "id": "uuid",
-  "type": "PurchaseCompleted",
+  "type": "PAYMENT_COMPLETED",
   "userId": "123",
-  "amount": 49.99,
-  "createdAt": "2026-03-10T00:00:00Z"
+  "payload": {
+    "amount": 49.99,
+    "currency": "USD"
+  },
+  "createdAt": "2026-03-11T22:00:00Z"
 }
 ```
 
@@ -65,10 +72,13 @@ Example response:
 [
   {
     "id": "uuid",
-    "type": "PurchaseCompleted",
+    "type": "PAYMENT_COMPLETED",
     "userId": "123",
-    "amount": 49.99,
-    "createdAt": "2026-03-10T00:00:00Z"
+    "payload": {
+      "amount": 49.99,
+      "currency": "USD"
+    },
+    "createdAt": "2026-03-11T22:00:00Z"
   }
 ]
 ```
@@ -78,16 +88,6 @@ Example response:
 Swagger UI:
 
 http://localhost:8080/swagger-ui/index.html
-
-# Project Structure
-
-    event-service-java
-    ├── controller
-    ├── service
-    ├── repository
-    ├── model
-    ├── dto
-    └── EventServiceApplication
 
 ------------------------------------------------------------------------
 
@@ -99,6 +99,9 @@ Services:
 
 -   PostgreSQL database
 -   pgAdmin database UI
+-   Kafka
+-   Zookeeper
+-   Kafka UI
 
 Start infrastructure:
 
@@ -140,29 +143,30 @@ You can now inspect the **events table** and query data directly.
 
 ------------------------------------------------------------------------
 
+# 5 - Kafka & Kafka UI
+
+Kafka broker: Bootstrap server: localhost:9092
+Topic: events
+
+Kafka UI: localhost:8081
+
+Zookeeper: localhost:2181 (used internally by Kafka)
+
+------------------------------------------------------------------------
+
 # Next Steps
 
 The Event Service is the first component of a larger distributed system.
 
 Planned improvements:
 
-### 1. Kafka Event Publishing
-
-When events are created:
-
-POST /events\
-↓\
-Store in Postgres\
-↓\
-Publish event to Kafka topic
-
-### 2. Event Processor Service (Go)
+### 1. Event Processor Service (Go)
 
 A Go microservice will consume events from Kafka and generate analytics.
 
 Kafka → Processor → Analytics Database
 
-### 3. API Gateway
+### 2. API Gateway
 
 Introduce a Go-based gateway for:
 
@@ -171,13 +175,21 @@ Introduce a Go-based gateway for:
 -   request logging
 -   rate limiting
 
+### 3. Event Generator (Load Testing)
+
+A Go-based tool:
+
+-   Send n events/second
+-   Simulate traffic
+
 ### 4. Observability
 
 Add production-grade observability:
 
--   OpenTelemetry tracing
+-   OpenTelemetry distributed tracing
 -   Prometheus metrics
 -   Grafana dashboards
+-   Logging via ELK stack
 
 ### 5. Frontend Dashboard
 

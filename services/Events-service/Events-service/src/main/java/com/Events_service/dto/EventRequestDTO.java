@@ -1,16 +1,11 @@
 package com.Events_service.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 
-@Data
-public class EventRequestDTO {
+import java.util.Map;
 
-    @NotBlank
-    private String type;
-
-    @NotBlank
-    private String userId;
-
-    private Double amount;
-}
+public record EventRequestDTO(
+        @NotBlank String type,
+        @NotBlank String userId,
+        Map<String, Object> payload
+) {}
