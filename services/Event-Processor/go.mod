@@ -1,4 +1,4 @@
-module event-processor
+module Event-Processor
 
 go 1.25.4
 

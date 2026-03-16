@@ -1,19 +1,33 @@
 package analytics
 
 import (
-	"context"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"Event-Processor/internal/db"
 	"Event-Processor/internal/model"
+	"context"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func ProcessEvent(pool *pgxpool.Pool, event model.Event) error {
+type Processor struct {
+	repo *db.AnalyticsRepository
+}
 
-	if event.Type == "PurchaseCompleted" {
-		_, err := pool.Exec(context.Background(),
-			`INSERT INTO analytics_revenue (user_id, amount)
-             VALUES ($1, $2)`,
-			event.UserID, event.Amount)
-		return err
+func NewProcessor(pool *pgxpool.Pool) *Processor {
+	return &Processor{
+		repo: db.NewAnalyticsRepository(pool),
 	}
-	return nil
+}
+
+func (p *Processor) Process(ctx context.Context, event model.Event) error {
+
+	switch event.EventType {
+
+	case "order_created":
+        return p.processOrderCreated(ctx, event)
+    // case "stock_updated":
+    //     return p.processStockUpdated(ctx, event)
+    default:
+        // unknown / uninteresting event types are ignored
+        return nil
+    }
 }

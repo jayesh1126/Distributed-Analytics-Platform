@@ -1,10 +1,10 @@
 services:
   postgres:
     image: postgres:16
-    container_name: events-postgres
+    container_name: orders-postgres
     restart: always
     environment:
-      POSTGRES_DB: events
+      POSTGRES_DB: orders
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -13,7 +13,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
   pgadmin:
     image: dpage/pgadmin4
-    container_name: events-pgadmin
+    container_name: orders-pgadmin
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
@@ -24,7 +24,7 @@ services:
     - pgadmin-data:/var/lib/pgadmin
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: events-zookeeper
+    container_name: orders-zookeeper
     restart: always
     ports:
       - "2181:2181"
@@ -33,7 +33,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: events-kafka
+    container_name: orders-kafka
     restart: always
     depends_on:
       - zookeeper
@@ -41,13 +41,13 @@ services:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: events-zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: orders-zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: events-kafka-ui
+    container_name: orders-kafka-ui
     restart: always
     depends_on:
       - kafka
@@ -55,7 +55,13 @@ services:
       - "8081:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: events-kafka:9092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: orders-kafka:9092
+  grafana-lgtm:
+    image: 'grafana/otel-lgtm:latest'
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
 
 
 volumes:

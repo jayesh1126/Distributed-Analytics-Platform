@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: Orders-service
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orders
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  management:
+    tracing:
+      sampling:
+        probability: 1.0 #100% for dev
+    otlp:
+      metrics:
+        export:
+          url: http://localhost:4317/v1/metrics
+    opentelemetry:
+      tracing:
+        export:
+          otlp:
+            endpoint: http://localhost:4318/v1/traces
+    logging:
+      level:
+        root: INFO
+        org.spring.framework.boot.actuator.autoconfigure.opentelemetry: DEBUG
+#      export:
+#        otlp:
+#          endpoint: http://localhost:4318/v1/logs

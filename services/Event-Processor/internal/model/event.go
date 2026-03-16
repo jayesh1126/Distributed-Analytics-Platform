@@ -1,11 +1,19 @@
 package model
 
-import "time"
+import (
+	"time"
+)
+
+type Item struct {
+	ProductId string `json:"productId"`
+	Quantity  int    `json:"quantity"`
+}
 
 type Event struct {
-	ID		string    `json:"id"`
-	Type	string    `json:"type"`
-	UserID	string    `json:"userId"`
-	Amount	float64   `json:"amount"`
-	CreatedAt	time.Time `json:"createdAt"`
+	EventType  string    `json:"eventType"`
+	CustomerId string    `json:"customerId"`
+	OrderId    string    `json:"orderId"`
+	Status     string    `json:"status"`
+	Items      []Item    `json:"items"`
+	CreatedAt  time.Time `json:"createdAt"`
 }
