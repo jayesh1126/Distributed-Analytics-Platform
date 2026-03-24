@@ -6,18 +6,34 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// Reader is perfect for consuming from a single topic and partition.
-// Automatically handles reconnections and offset commits.
-func newConsumer() *kafka.Reader {
-	return kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{"localhost:9092"},
-		Topic:     "orders",
-		Partition: 0,
-		GroupID:   "order-processor-group",
-	})
+type Consumer struct {
+	reader *kafka.Reader
 }
 
-// ReadMessage reads a single message from the Kafka topic.
-func ReadMessage(reader *kafka.Reader) (kafka.Message, error) {
-	return reader.ReadMessage(context.Background())
+func NewOrderConsumer(brokers []string, groupID string) *Consumer {
+	return &Consumer{
+		reader: kafka.NewReader(kafka.ReaderConfig{
+			Brokers: brokers,
+			GroupID: groupID,
+			Topic:   "order",
+		}),
+	}
+}
+
+func NewStockConsumer(brokers []string, groupID string) *Consumer {
+	return &Consumer{
+		reader: kafka.NewReader(kafka.ReaderConfig{
+			Brokers: brokers,
+			GroupID: groupID,
+			Topic:   "stock",
+		}),
+	}
+}
+
+func (c *Consumer) Close() error {
+	return c.reader.Close()
+}
+
+func (c *Consumer) ReadMessage(ctx context.Context) (kafka.Message, error) {
+	return c.reader.ReadMessage(ctx)
 }

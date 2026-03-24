@@ -5,7 +5,10 @@ import (
 	"context"
 )
 
-
 func (p *Processor) processOrderCreated(ctx context.Context, event model.Event) error {
-    return p.repo.IncrementMetric(ctx, "ORDERS", "order_created", 1)
+	return p.repo.IncrementMetric(ctx, "ORDERS", "order_created", 1)
+}
+
+func (p *Processor) processStockUpdated(ctx context.Context, event model.Event) error {
+	return p.repo.IncrementMetric(ctx, "STOCK", "stock_updated", 1)
 }

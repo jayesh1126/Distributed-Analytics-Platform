@@ -23,11 +23,10 @@ func (p *Processor) Process(ctx context.Context, event model.Event) error {
 	switch event.EventType {
 
 	case "order_created":
-        return p.processOrderCreated(ctx, event)
-    // case "stock_updated":
-    //     return p.processStockUpdated(ctx, event)
-    default:
-        // unknown / uninteresting event types are ignored
-        return nil
-    }
+		return p.processOrderCreated(ctx, event)
+	// case "stock_updated":
+	//     return p.processStockUpdated(ctx, event)
+	default:
+		return nil
+	}
 }
