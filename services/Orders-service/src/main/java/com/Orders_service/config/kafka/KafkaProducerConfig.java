@@ -1,4 +1,4 @@
-package com.Orders_service.config;
+package com.Orders_service.config.kafka;
 
 import com.Orders_service.dto.EventDTO;
 import org.apache.kafka.clients.producer.ProducerConfig;

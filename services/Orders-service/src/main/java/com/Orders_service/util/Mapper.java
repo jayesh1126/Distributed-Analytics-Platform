@@ -4,6 +4,7 @@ import com.Orders_service.dto.EventDTO;
 import com.Orders_service.dto.Item;
 import com.Orders_service.dto.OrderResponseDTO;
 import com.Orders_service.model.Order;
+import com.Orders_service.model.OutboxEvent;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,20 @@ public class Mapper {
                 .status(orderResponseDTO.status())
                 .items(orderResponseDTO.items())
                 .createdAt(orderResponseDTO.createdAt())
+                .build();
+    }
+
+    public EventDTO mapOutboxToEventDTO(OutboxEvent outboxEvent) {
+        return EventDTO.builder()
+                .eventType(outboxEvent.getEventType())
+                .customerId(outboxEvent.getCustomerId())
+                .orderId(outboxEvent.getOrderId())
+                .status(outboxEvent.getStatus())
+                .items(objectMapper.convertValue(
+                        outboxEvent.getItems(),
+                        new TypeReference<List<Item>>() {}
+                ))
+                .createdAt(outboxEvent.getCreatedAt())
                 .build();
     }
 }

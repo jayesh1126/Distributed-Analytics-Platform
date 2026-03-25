@@ -38,7 +38,13 @@ High level flow:
             │
             ├─ Store order in PostgreSQL
             │
-            └─ Publish OrderCreated event → Kafka
+            └─ Write event to Outbox table (transactional)
+                    │
+                    ▼
+                Background Publisher (Spring @Scheduled)
+                    │
+                    ▼
+                Publish event → Kafka
                     │
                     ▼
     Kafka Topic: order-events
@@ -95,10 +101,38 @@ Responsibilities:
 
 -   Accept order requests
 -   Persist orders in PostgreSQL
--   Publish order events to Kafka
+-   Reliably publish order events to Kafka via an outbox pattern
 -   Expose APIs to retrieve orders
 
 This service represents the **core business logic of the system**.
+
+# Event Publishing (Transactional Outbox Pattern)
+
+To ensure reliable event delivery, the Order Service implements the Transactional Outbox Pattern.
+
+Flow:
+- Order is written to the database
+- Event is written to an event_outbox table in the same transaction
+- A background publisher reads from the outbox and sends events to Kafka
+
+**This guarantees:**
+- No lost events
+- Atomic writes (order + event)
+- Safe retries on failure
+
+**Concurrent Outbox Processing**
+
+To support horizontal scaling, the outbox publisher uses:
+```SQL
+SELECT * FROM event_outbox
+WHERE status IN ('NEW','FAILED')
+FOR UPDATE SKIP LOCKED
+LIMIT 50;
+```
+This enables:
+- Multiple service instances to process events safely
+- Row-level locking to prevent duplicate publishing
+- High throughput batch processing
 
 Run the service:
 
@@ -251,7 +285,8 @@ This demonstrates **highly concurrent event processing using Go**.
 
 Topic:
 
-    order-events
+    orders
+    stock
 
 Example event:
 
@@ -423,5 +458,7 @@ This repository showcases many modern backend engineering concepts:
 -   Load testing
 -   Asynchronous processing
 -   Containerized infrastructure
+-   Transactional outbox pattern for reliable event publishing
+-   Row-level locking (SKIP LOCKED) for safe concurrent processing
 
 The goal is to simulate how **large distributed systems ingest, process, and analyze high volumes of events in production environments**.

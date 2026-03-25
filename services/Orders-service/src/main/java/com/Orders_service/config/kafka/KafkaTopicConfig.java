@@ -1,4 +1,4 @@
-package com.Orders_service.config;
+package com.Orders_service.config.kafka;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
