@@ -1,10 +1,7 @@
 package com.Orders_service.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity

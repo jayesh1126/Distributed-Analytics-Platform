@@ -18,7 +18,7 @@ func (r *AnalyticsRepository) MarkEventProcessed(ctx context.Context, eventID st
 	_, err := r.Pool.Exec(ctx,
 		`INSERT INTO analytics_events 
 		(event_id, processed_at, processing_time_ms, duration) 
-		VALUES ($1, NOW(), $3, 'processed')`,
+		VALUES ($1, NOW(), $2, 'processed')`,
 		eventID, duration)
 	return err
 }

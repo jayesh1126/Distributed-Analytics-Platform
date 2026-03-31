@@ -1,6 +1,5 @@
 package com.Orders_service.model;
 
-import com.Orders_service.dto.Item;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
